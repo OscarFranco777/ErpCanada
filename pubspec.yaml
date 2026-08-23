@@ -1,0 +1,49 @@
+name: erp_canada
+description: "ERP, Facturación y CRM para servicios en Canadá"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.5
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  
+  # Base de datos
+  sqflite_common_ffi: ^2.3.4+4
+  sqflite: ^2.4.1+1
+  path_provider: ^2.1.5
+  path: ^1.9.1
+  
+  # PDF
+  pdf: ^3.11.3
+  
+  # UI
+  flutter_typeahead: ^5.2.0
+  intl: ^0.20.2
+  image_picker: ^1.1.2
+  file_picker: ^8.1.7
+  data_table_2: ^2.5.8
+  
+  # Estado
+  provider: ^6.1.2
+  
+  # Utilidades
+  uuid: ^4.5.1
+  http: ^1.2.2
+  url_launcher: ^6.3.1
+
+  # PDF generation
+  printing: ^5.13.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
