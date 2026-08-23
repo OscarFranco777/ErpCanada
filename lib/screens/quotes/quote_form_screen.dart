@@ -71,11 +71,19 @@ class _QuoteFormScreenState extends State<QuoteFormScreen>
     final products = await provider.getProductsList();
     final provinces = await provider.getProvinces();
 
+    // Deduplicate by code to avoid DropdownMenuItem collision
+    final seenProv = <String>{};
+    final uniqueProv = <Map<String, dynamic>>[];
+    for (final p in provinces) {
+      final code = p['code'] as String;
+      if (seenProv.add(code)) uniqueProv.add(p);
+    }
+
     setState(() {
       _customers = customers;
       _services = services;
       _products = products;
-      _provinces = provinces;
+      _provinces = uniqueProv;
     });
 
     // If editing, load existing items and customer

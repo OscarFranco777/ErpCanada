@@ -73,7 +73,19 @@ class _CustomerFormScreenState extends State<CustomerFormScreen>
   Future<void> _loadProvinces() async {
     final provider = context.read<ERPProvider>();
     final provinces = await provider.getProvinces();
-    setState(() { _provinces = provinces; _loadingProvinces = false; });
+    // Deduplicate by code to avoid DropdownMenuItem collision
+    final seen = <String>{};
+    final unique = <Map<String, dynamic>>[];
+    for (final p in provinces) {
+      final code = p['code'] as String;
+      if (seen.add(code)) unique.add(p);
+    }
+    // Ensure current province code exists in the list, otherwise null it
+    final validCodes = unique.map((p) => p['code'] as String).toSet();
+    if (_provinceCode != null && !validCodes.contains(_provinceCode)) {
+      _provinceCode = null;
+    }
+    setState(() { _provinces = unique; _loadingProvinces = false; });
   }
 
   Future<void> _searchAddress(String query) async {
@@ -281,6 +293,8 @@ class _CustomerFormScreenState extends State<CustomerFormScreen>
                                         child: Text(p['code'] as String),
                                       ),
                                     )).toList(),
+                                    // Safety: if current value is not in items, clear it
+                                    // Flutter handles this via the assertion in DropdownButtonFormField
                                     onChanged: (v) => setState(() => _provinceCode = v),
                                   )),
                           ]),

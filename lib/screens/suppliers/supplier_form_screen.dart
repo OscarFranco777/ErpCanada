@@ -75,7 +75,14 @@ class _SupplierFormScreenState extends State<SupplierFormScreen>
   Future<void> _loadProvinces() async {
     final provider = context.read<ERPProvider>();
     final provinces = await provider.getProvinces();
-    setState(() { _provinces = provinces; _loadingProvinces = false; });
+    // Deduplicate by code to avoid DropdownMenuItem collision
+    final seen = <String>{};
+    final unique = <Map<String, dynamic>>[];
+    for (final p in provinces) {
+      final code = p['code'] as String;
+      if (seen.add(code)) unique.add(p);
+    }
+    setState(() { _provinces = unique; _loadingProvinces = false; });
   }
 
   Future<void> _searchAddress(String query) async {
