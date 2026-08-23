@@ -79,8 +79,16 @@ class _QuoteFormScreenState extends State<QuoteFormScreen>
       if (seenProv.add(code)) uniqueProv.add(p);
     }
 
+    // Deduplicate customers by id to avoid DropdownMenuItem collision
+    final seenCust = <int>{};
+    final uniqueCust = <Map<String, dynamic>>[];
+    for (final c in customers) {
+      final id = c['id'] as int;
+      if (seenCust.add(id)) uniqueCust.add(c);
+    }
+
     setState(() {
-      _customers = customers;
+      _customers = uniqueCust;
       _services = services;
       _products = products;
       _provinces = uniqueProv;
@@ -89,7 +97,7 @@ class _QuoteFormScreenState extends State<QuoteFormScreen>
     // If editing, load existing items and customer
     if (isEditing) {
       final items = await provider.getQuoteItems(widget.quote!['id']);
-      final cust = customers.where((c) => c['id'] == widget.quote!['customer_id']).toList();
+      final cust = uniqueCust.where((c) => c['id'] == widget.quote!['customer_id']).toList();
       setState(() {
         _selectedCustomer = cust.isNotEmpty ? cust.first : null;
         _items = items.map((i) => _QuoteLine(
